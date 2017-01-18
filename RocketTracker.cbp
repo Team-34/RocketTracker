@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="RocketTracker" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/RocketTracker" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/RocketTracker" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+		</Compiler>
+		<Unit filename="CMakeCache.txt" />
+		<Unit filename="CMakeFiles/2.8.12.2/CMakeCCompiler.cmake" />
+		<Unit filename="CMakeFiles/2.8.12.2/CMakeCXXCompiler.cmake" />
+		<Unit filename="CMakeFiles/2.8.12.2/CMakeDetermineCompilerABI_C.bin" />
+		<Unit filename="CMakeFiles/2.8.12.2/CMakeDetermineCompilerABI_CXX.bin" />
+		<Unit filename="CMakeFiles/2.8.12.2/CMakeSystem.cmake" />
+		<Unit filename="CMakeFiles/2.8.12.2/CompilerIdC/CMakeCCompilerId.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="CMakeFiles/2.8.12.2/CompilerIdC/a.out" />
+		<Unit filename="CMakeFiles/2.8.12.2/CompilerIdCXX/CMakeCXXCompilerId.cpp" />
+		<Unit filename="CMakeFiles/2.8.12.2/CompilerIdCXX/a.out" />
+		<Unit filename="CMakeFiles/CMakeDirectoryInformation.cmake" />
+		<Unit filename="CMakeFiles/CMakeOutput.log" />
+		<Unit filename="CMakeFiles/Makefile.cmake" />
+		<Unit filename="CMakeFiles/Makefile2" />
+		<Unit filename="CMakeFiles/RocketTracker.dir/CXX.includecache" />
+		<Unit filename="CMakeFiles/RocketTracker.dir/DependInfo.cmake" />
+		<Unit filename="CMakeFiles/RocketTracker.dir/Source.cpp.o" />
+		<Unit filename="CMakeFiles/RocketTracker.dir/build.make" />
+		<Unit filename="CMakeFiles/RocketTracker.dir/cmake_clean.cmake" />
+		<Unit filename="CMakeFiles/RocketTracker.dir/depend.internal" />
+		<Unit filename="CMakeFiles/RocketTracker.dir/depend.make" />
+		<Unit filename="CMakeFiles/RocketTracker.dir/flags.make" />
+		<Unit filename="CMakeFiles/RocketTracker.dir/link.txt" />
+		<Unit filename="CMakeFiles/RocketTracker.dir/progress.make" />
+		<Unit filename="CMakeFiles/TargetDirectories.txt" />
+		<Unit filename="CMakeFiles/cmake.check_cache" />
+		<Unit filename="CMakeFiles/progress.marks" />
+		<Unit filename="CMakeLists.txt" />
+		<Unit filename="Makefile" />
+		<Unit filename="PropertySheet1.props" />
+		<Unit filename="README.md" />
+		<Unit filename="RocketTracker.depend" />
+		<Unit filename="RocketTracker.sln" />
+		<Unit filename="RocketTracker.vcxproj" />
+		<Unit filename="RocketTracker.vcxproj.filters" />
+		<Unit filename="Source.cpp" />
+		<Unit filename="cmake_install.cmake" />
+		<Unit filename="main.cpp" />
+		<Unit filename="obj/Debug/RocketTracker/CMakeFiles/2.8.12.2/CompilerIdC/CMakeCCompilerId.o" />
+		<Unit filename="obj/Debug/RocketTracker/CMakeFiles/2.8.12.2/CompilerIdCXX/CMakeCXXCompilerId.o" />
+		<Unit filename="obj/Debug/RocketTracker/Source.o" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

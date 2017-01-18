@@ -1,0 +1,24 @@
+# depslib dependency file v1.0
+1484433288 source:/home/ubuntu/RocketTracker/RocketTracker/RocketTracker/Source.cpp
+	<iostream>
+	"opencv2/highgui/highgui.hpp"
+	"opencv2/imgproc/imgproc.hpp"
+	<string>
+
+1484433173 source:/home/ubuntu/RocketTracker/RocketTracker/RocketTracker/CMakeFiles/2.8.12.2/CompilerIdC/CMakeCCompilerId.c
+
+1484433173 source:/home/ubuntu/RocketTracker/RocketTracker/RocketTracker/CMakeFiles/2.8.12.2/CompilerIdCXX/CMakeCXXCompilerId.cpp
+
+1484433173 source:/home/ubuntu/RocketTracker/RocketTracker/CMakeFiles/2.8.12.2/CompilerIdC/CMakeCCompilerId.c
+
+1484433173 source:/home/ubuntu/RocketTracker/RocketTracker/CMakeFiles/2.8.12.2/CompilerIdCXX/CMakeCXXCompilerId.cpp
+
+1484438117 source:/home/ubuntu/RocketTracker/RocketTracker/main.cpp
+	<iostream>
+
+1484433288 source:/home/ubuntu/RocketTracker/RocketTracker/Source.cpp
+	<iostream>
+	"opencv2/highgui/highgui.hpp"
+	"opencv2/imgproc/imgproc.hpp"
+	<string>
+
