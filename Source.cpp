@@ -4,10 +4,11 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include <string>
 #include <time.h>
-
+#include "opencv2/gpu/gpu.hpp"
 
 using namespace cv;
 using namespace std;
+using namespace gpu;
 
 
 
@@ -61,8 +62,6 @@ int main(int argc, char** argv)
 	int iLowV = 93;
 	int iHighV = 255;
 
-	int brightness = 10;
-
 	//Create trackbars in "Control" window
 	createTrackbar("LowH", "Control", &iLowH, 179); //Hue (0 - 179)
 	createTrackbar("HighH", "Control", &iHighH, 179);
@@ -72,10 +71,6 @@ int main(int argc, char** argv)
 
 	createTrackbar("LowV", "Control", &iLowV, 255);//Value (0 - 255)
 	createTrackbar("HighV", "Control", &iHighV, 255);
-
-	createTrackbar("Brightness", "Control", &brightness, 100);
-
-	
 
 	int iLastX = -1;
 	int iLastY = -1;
@@ -88,8 +83,6 @@ int main(int argc, char** argv)
 	//Capture a temporary image from the camera
 	cap.read(imgTmp);
 
-    
-
 	//Create a black image with the size as the camera output
 	Mat imgLines = Mat::zeros(imgTmp.size(), CV_8UC3);
 
@@ -99,32 +92,35 @@ int main(int argc, char** argv)
 		Mat imgOriginal;
 
 		cap.read(imgOriginal); // read a new frame from video
-		/*cap.set(CAP_PROP_EXPOSURE, brightness);*/
+
         imshow("Stream", imgOriginal);
 
-        
+		GpuMat g_imgHSV;
         Mat imgHSV;
 		cvtColor(imgOriginal, imgHSV, COLOR_BGR2HSV); //Convert the captured frame from BGR to HSV
-
-		
 		Mat imgThresholded;
+		GpuMat g_imgThresholded;
 
+		inRange(imgHSV, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), imgThresholded); //Threshold the image
+		g_imgThresholded.upload(imgThresholded);
 		//morphological opening (removes small objects from the foreground)
-		erode(imgHSV, imgHSV, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
-		dilate(imgHSV, imgHSV, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+		gpu::erode(g_imgThresholded, g_imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+		gpu::dilate(g_imgThresholded, g_imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
 
 		//morphological closing (removes small holes from the foreground)
-		dilate(imgHSV, imgHSV, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
-		erode(imgHSV, imgHSV, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+		gpu::dilate(g_imgThresholded, g_imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+		gpu::erode(g_imgThresholded, g_imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
 
 		int thresh = 100;
-		Mat canny_output;
+		GpuMat g_canny_output;
 		vector<Vec4i> hierarchy;
 		vector<vector<Point> > contours;
 		RNG rng(12345);
 
-		Canny(imgHSV, canny_output, thresh, thresh * 2, 3);
+		gpu::Canny(g_imgThresholded, g_canny_output, thresh, thresh * 2, 3);
 		/// Find contours
+		Mat canny_output;
+		g_canny_output.download(canny_output);
 		findContours(canny_output, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
 
 		/// Draw contours
@@ -132,7 +128,7 @@ int main(int argc, char** argv)
 		for (int i = 0; i < contours.size(); i++)
 		{
 			Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
-			cv::drawContours(drawing, contours, i, color, 2, 8, hierarchy, 0, Point());
+			drawContours(drawing, contours, i, color, 2, 8, hierarchy, 0, Point());
 		}
 
 		/*This function finds if there are any contours, and if there are
