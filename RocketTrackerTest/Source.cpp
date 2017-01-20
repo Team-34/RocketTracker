@@ -5,11 +5,23 @@
 #include <string>
 #include <time.h>
 #include <math.h>
+#include "networktables\networktable.h"
+#include "ntcore.h"
 
 using namespace cv;
 using namespace std;
+using std::shared_ptr;
 
 #define PI 3.14159265
+
+shared_ptr<NetworkTable> startConnection() {
+	NetworkTable::SetClientMode();
+	NetworkTable::SetTeam(34);
+	NetworkTable::SetIPAddress("10.00.34.1");
+	NetworkTable::Initialize();
+	shared_ptr<NetworkTable> myTable = NetworkTable::GetTable("SmartDashboard");
+	return myTable;
+}
 
 double calculateDistance(double _fov, double _width)
 {
@@ -22,6 +34,7 @@ double calculateDistance(double _fov, double _width)
 int main(int argc, char** argv)
 {
 	//setup all my variables
+
 	double neededAngle;
 	double offset;
 	int width;
@@ -92,6 +105,8 @@ int main(int argc, char** argv)
 
 	int iLastX = -1;
 	int iLastY = -1;
+
+	shared_ptr<NetworkTable> table = startConnection();
 
 	Mat imgTmp;
 
@@ -180,6 +195,9 @@ int main(int argc, char** argv)
 			offset = center[nsize].x - half;
 			diameter = radius[nsize] * 2;
 			neededAngle = offset * angle;
+			table->PutNumber("neededAngle", neededAngle);
+			double distance = calculateDistance(angle, diameter);
+			table->PutNumber("distance", distance);
 			cout << neededAngle << "\t" << calculateDistance(angle, diameter) << endl;
 		}
 
