@@ -1,6 +1,6 @@
 ﻿  Source.cpp
-c:\programming\rockettracker\rockettracker\rockettrackertest\source.cpp(141): warning C4244: 'argument': conversion from 'float' to 'const int', possible loss of data
-c:\programming\rockettracker\rockettracker\rockettrackertest\source.cpp(150): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-c:\programming\rockettracker\rockettracker\rockettrackertest\source.cpp(151): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+c:\programming\rockettracker\rockettracker\rockettrackertest\source.cpp(163): warning C4244: 'argument': conversion from 'float' to 'const int', possible loss of data
+c:\programming\rockettracker\rockettracker\rockettrackertest\source.cpp(175): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+c:\programming\rockettracker\rockettracker\rockettrackertest\source.cpp(176): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
   RocketTrackerTest.vcxproj -> C:\Programming\RocketTracker\RocketTracker\RocketTrackerTest\x64\Debug\RocketTrackerTest.exe
   RocketTrackerTest.vcxproj -> C:\Programming\RocketTracker\RocketTracker\RocketTrackerTest\x64\Debug\RocketTrackerTest.pdb (Partial PDB)

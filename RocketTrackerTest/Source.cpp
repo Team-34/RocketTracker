@@ -4,10 +4,21 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include <string>
 #include <time.h>
+#include <math.h>
 
 using namespace cv;
 using namespace std;
 
+#define PI 3.14159265
+
+double calculateDistance(double _fov, double _width)
+{
+	_fov /= 2;
+	double _rfov = (_fov * PI / 180.0);
+	double tanned = tan(_rfov);
+	double distance = tanned * _width;
+	return distance;
+}
 int main(int argc, char** argv)
 {
 	//setup all my variables
@@ -16,6 +27,7 @@ int main(int argc, char** argv)
 	int width;
 	double angle;
 	int height;
+	double diameter;
 	int cameraInput;
 	cout << "Resolution Width: ";
 	cin >> width;
@@ -47,8 +59,10 @@ int main(int argc, char** argv)
 
 	cap.set(CV_CAP_PROP_FRAME_WIDTH, width);
 	cap.set(CV_CAP_PROP_FRAME_HEIGHT, height);
+	cap.set(CAP_PROP_EXPOSURE, -8);
+	cap.set(CAP_PROP_BRIGHTNESS, -64);
 
-	namedWindow("Control", CV_WINDOW_AUTOSIZE); //create a window called "Control"
+	namedWindow("Control", CV_WINDOW_NORMAL); //create a window called "Control"
 
 	int iLowH = 44;
 	int iHighH = 99;
@@ -59,7 +73,9 @@ int main(int argc, char** argv)
 	int iLowV = 93;
 	int iHighV = 255;
 
-	int brightness = 10;
+	int brightness = -64;
+
+	int exposure = 4;
 
 	//Create trackbars in "Control" window
 	createTrackbar("LowH", "Control", &iLowH, 179); //Hue (0 - 179)
@@ -71,7 +87,8 @@ int main(int argc, char** argv)
 	createTrackbar("LowV", "Control", &iLowV, 255);//Value (0 - 255)
 	createTrackbar("HighV", "Control", &iHighV, 255);
 
-	createTrackbar("Brightness", "Control", &brightness, 100);
+	createTrackbar("Brightness", "Control", &brightness, 128);
+	createTrackbar("Exposure", "Control", &exposure, 8);
 
 	int iLastX = -1;
 	int iLastY = -1;
@@ -79,6 +96,7 @@ int main(int argc, char** argv)
 	Mat imgTmp;
 
 	namedWindow("Stream", CV_WINDOW_NORMAL);
+	namedWindow("Thresholded Stream", CV_WINDOW_AUTOSIZE);
 
 	//Capture a temporary image from the camera
 	cap.read(imgTmp);
@@ -91,7 +109,7 @@ int main(int argc, char** argv)
 		Mat imgOriginal;
 
 		cap.read(imgOriginal); // read a new frame from video
-		cap.set(CAP_PROP_BRIGHTNESS, brightness - 10);
+
 		imshow("Stream", imgOriginal);
 
 		Mat imgHSV;
@@ -99,13 +117,15 @@ int main(int argc, char** argv)
 
 		Mat imgThresholded;
 
+		inRange(imgHSV, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), imgThresholded); //Threshold the image
+
 		//morphological opening (removes small objects from the foreground)
-		erode(imgHSV, imgHSV, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
-		dilate(imgHSV, imgHSV, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+		erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+		dilate(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
 
 		//morphological closing (removes small holes from the foreground)
-		dilate(imgHSV, imgHSV, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
-		erode(imgHSV, imgHSV, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+		dilate(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+		erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
 
 		int thresh = 100;
 		Mat canny_output;
@@ -113,7 +133,8 @@ int main(int argc, char** argv)
 		vector<vector<Point> > contours;
 		RNG rng(12345);
 
-		Canny(imgHSV, canny_output, thresh, thresh * 2, 3);
+		Canny(imgThresholded, canny_output, thresh, thresh * 2, 3);
+		imshow("Thresholded Stream", imgThresholded);
 		/// Find contours
 		findContours(canny_output, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
 
@@ -128,6 +149,7 @@ int main(int argc, char** argv)
 		/*This function finds if there are any contours, and if there are
 		Then we will first find the center, then add that to a vector(array); This is because there can be more
 		than one contours */
+		float largest = 0.0f;
 		if (contours.size() > 0) {
 			for (int i = 0; i < contours.size(); i++) {
 				if (cv::contourArea(contours[i]) > 1) {
@@ -139,6 +161,9 @@ int main(int argc, char** argv)
 					{
 						center.push_back(c);
 						radius.push_back(r);
+						if (r > largest) {
+							largest = r;
+						}
 					}
 				}
 			}
@@ -149,11 +174,13 @@ int main(int argc, char** argv)
 
 		int ssize = center.size();
 		int nsize = center.size() - 1;
+
 		//This is an equation I got from Cheesy Poofs to find out what angle we need to be at
 		if (ssize > 0) {
 			offset = center[nsize].x - half;
+			diameter = radius[nsize] * 2;
 			neededAngle = offset * angle;
-			cout << neededAngle << endl;
+			cout << neededAngle << "\t" << calculateDistance(angle, diameter) << endl;
 		}
 
 		if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
